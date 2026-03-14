@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// run: flutter pub run build_runner build
 
 part of 'hamster_model.dart';
 
@@ -23,13 +22,14 @@ class HamsterModelAdapter extends TypeAdapter<HamsterModel> {
       level: fields[6] as int,
       lastFedAt: fields[7] as DateTime,
       lastSyncedAt: fields[8] as DateTime,
+      hamsterType: fields[9] as String? ?? 'golden',
     );
   }
 
   @override
   void write(BinaryWriter writer, HamsterModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +47,9 @@ class HamsterModelAdapter extends TypeAdapter<HamsterModel> {
       ..writeByte(7)
       ..write(obj.lastFedAt)
       ..writeByte(8)
-      ..write(obj.lastSyncedAt);
+      ..write(obj.lastSyncedAt)
+      ..writeByte(9)
+      ..write(obj.hamsterType);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/hamster_repository.dart';
 import '../domain/hamster_model.dart';
 import '../domain/hamster_engine.dart';
+import '../domain/hamster_type.dart';
 import '../../auth/presentation/auth_provider.dart';
 import '../../../core/constants/game_constants.dart';
 
@@ -64,12 +65,12 @@ class HamsterNotifier extends AsyncNotifier<HamsterModel?> {
     await ref.read(hamsterRepositoryProvider).saveLocally(updated);
   }
 
-  Future<void> createHamster(String name) async {
+  Future<void> createHamster(String name, HamsterType type) async {
     final user = ref.read(currentUserProvider);
     if (user == null) return;
 
     final repo = ref.read(hamsterRepositoryProvider);
-    final hamster = await repo.createHamster(user.id, name);
+    final hamster = await repo.createHamster(user.id, name, type.id);
     state = AsyncData(hamster);
     _startTimers();
   }

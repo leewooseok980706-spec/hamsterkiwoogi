@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'hamster_type.dart';
 
 part 'hamster_model.g.dart';
 
@@ -31,6 +32,9 @@ class HamsterModel extends HiveObject {
   @HiveField(8)
   DateTime lastSyncedAt;
 
+  @HiveField(9)
+  String hamsterType;
+
   HamsterModel({
     required this.id,
     required this.userId,
@@ -41,7 +45,10 @@ class HamsterModel extends HiveObject {
     this.level = 1,
     required this.lastFedAt,
     required this.lastSyncedAt,
+    this.hamsterType = 'golden',
   });
+
+  HamsterType get type => HamsterTypeExt.fromId(hamsterType);
 
   factory HamsterModel.fromJson(Map<String, dynamic> json) => HamsterModel(
         id: json['id'] as String,
@@ -53,6 +60,7 @@ class HamsterModel extends HiveObject {
         level: json['level'] as int,
         lastFedAt: DateTime.parse(json['last_fed_at'] as String),
         lastSyncedAt: DateTime.parse(json['last_synced_at'] as String),
+        hamsterType: json['hamster_type'] as String? ?? 'golden',
       );
 
   Map<String, dynamic> toJson() => {
@@ -65,6 +73,7 @@ class HamsterModel extends HiveObject {
         'level': level,
         'last_fed_at': lastFedAt.toIso8601String(),
         'last_synced_at': lastSyncedAt.toIso8601String(),
+        'hamster_type': hamsterType,
       };
 
   HamsterModel copyWith({
@@ -75,6 +84,7 @@ class HamsterModel extends HiveObject {
     int? level,
     DateTime? lastFedAt,
     DateTime? lastSyncedAt,
+    String? hamsterType,
   }) =>
       HamsterModel(
         id: id,
@@ -86,5 +96,6 @@ class HamsterModel extends HiveObject {
         level: level ?? this.level,
         lastFedAt: lastFedAt ?? this.lastFedAt,
         lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+        hamsterType: hamsterType ?? this.hamsterType,
       );
 }

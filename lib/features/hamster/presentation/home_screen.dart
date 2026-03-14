@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/hamster_engine.dart';
+import '../domain/hamster_type.dart';
 import '../../../core/constants/game_constants.dart';
 import 'hamster_provider.dart';
 import 'stat_bar_widget.dart';
 import 'chat_input_widget.dart';
 import 'speech_bubble_widget.dart';
+import 'animated_hamster_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +19,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _currentBubbleMessage;
   Key _bubbleKey = UniqueKey();
+  String? _actionTrigger;
 
   void _onChatSend(HamsterAction action, String message) {
     // 스탯 업데이트
@@ -25,9 +28,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // 말풍선 표시
     final response = HamsterResponse.getMessage(action);
 
+    final trigger = switch (action) {
+      HamsterAction.feed => 'eat',
+      HamsterAction.play => 'play',
+      HamsterAction.pet => 'pet',
+      HamsterAction.greet => 'talk',
+      HamsterAction.unknown => 'talk',
+    };
+
     setState(() {
       _currentBubbleMessage = response;
       _bubbleKey = UniqueKey();
+      _actionTrigger = trigger;
+    });
+
+    // 액션 트리거 리셋
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _actionTrigger = null);
     });
   }
 
@@ -75,10 +92,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               // 2. 햄스터 애니메이션 (중앙, 풀스크린)
               _HamsterView(
+                hamsterType: hamster.type,
                 animState: animState,
                 bubbleMessage: _currentBubbleMessage,
                 bubbleKey: _bubbleKey,
                 onBubbleDismissed: _onBubbleDismissed,
+                actionTrigger: _actionTrigger,
               ),
 
               // 3. 상단: 스탯 바 오버레이
@@ -138,16 +157,20 @@ class _HamsterBackground extends StatelessWidget {
 }
 
 class _HamsterView extends StatelessWidget {
+  final HamsterType hamsterType;
   final HamsterAnimationState animState;
   final String? bubbleMessage;
   final Key bubbleKey;
   final VoidCallback onBubbleDismissed;
+  final String? actionTrigger;
 
   const _HamsterView({
+    required this.hamsterType,
     required this.animState,
     required this.bubbleMessage,
     required this.bubbleKey,
     required this.onBubbleDismissed,
+    this.actionTrigger,
   });
 
   @override
@@ -165,24 +188,14 @@ class _HamsterView extends StatelessWidget {
             ),
           const SizedBox(height: 8),
 
-          // 햄스터 (Rive 자리 — 현재는 이모지로 플레이스홀더)
-          Text(
-            _getHamsterEmoji(animState),
-            style: const TextStyle(fontSize: 120),
+          // 실제 커스텀 애니메이션 햄스터
+          AnimatedHamsterWidget(
+            type: hamsterType,
+            animState: animState,
+            actionTrigger: actionTrigger,
           ),
         ],
       ),
     );
-  }
-
-  String _getHamsterEmoji(HamsterAnimationState state) {
-    return switch (state) {
-      HamsterAnimationState.happy => '🐹',
-      HamsterAnimationState.normal => '🐹',
-      HamsterAnimationState.hungry => '🐹',
-      HamsterAnimationState.sad => '🐹',
-      HamsterAnimationState.sick => '🐹',
-    };
-    // TODO: Rive 애니메이션 파일 준비 후 RiveAnimation.asset()으로 교체
   }
 }

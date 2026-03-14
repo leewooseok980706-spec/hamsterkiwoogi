@@ -10,14 +10,14 @@ class AuthRepository {
   Future<void> signInWithGoogle() async {
     await _client.auth.signInWithOAuth(
       OAuthProvider.google,
-      redirectTo: 'io.supabase.hamsterapp://login-callback/',
+      redirectTo: 'https://hamsterkiwoogi.pages.dev',
     );
   }
 
   Future<void> signInWithApple() async {
     await _client.auth.signInWithOAuth(
       OAuthProvider.apple,
-      redirectTo: 'io.supabase.hamsterapp://login-callback/',
+      redirectTo: 'https://hamsterkiwoogi.pages.dev',
     );
   }
 

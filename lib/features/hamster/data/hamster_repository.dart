@@ -31,7 +31,7 @@ class HamsterRepository {
   }
 
   /// 햄스터 생성 (첫 실행)
-  Future<HamsterModel> createHamster(String userId, String name) async {
+  Future<HamsterModel> createHamster(String userId, String name, String hamsterType) async {
     final now = DateTime.now();
     final response = await _client
         .from('hamsters')
@@ -42,6 +42,7 @@ class HamsterRepository {
           'happiness': 80,
           'health': 100,
           'level': 1,
+          'hamster_type': hamsterType,
           'last_fed_at': now.toIso8601String(),
           'last_synced_at': now.toIso8601String(),
         })
